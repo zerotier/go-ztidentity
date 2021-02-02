@@ -33,6 +33,7 @@ import (
 	"crypto/sha512"
 	"encoding/binary"
 	"fmt"
+	"io"
 
 	"golang.org/x/crypto/salsa20/salsa"
 
@@ -84,7 +85,10 @@ func computeZeroTierIdentityMemoryHardHash(publicKey []byte) []byte {
 func generateDualPair() (pub [64]byte, priv [64]byte) {
 	k0pub, k0priv, _ := ed25519.GenerateKey(secrand.Reader)
 	var k1pub, k1priv [32]byte
-	secrand.Read(k1priv[:])
+	_, err := io.ReadFull(secrand.Reader, k1priv[:])
+	if err != nil {
+		panic(fmt.Sprintf("Not enough entropy: %v", err)) // FIXME for now; will adjust prototypes later
+	}
 	curve25519.ScalarBaseMult(&k1pub, &k1priv)
 	copy(pub[0:32], k1pub[:])
 	copy(pub[32:64], k0pub[0:32])
