@@ -35,11 +35,9 @@ import (
 	"fmt"
 	"io"
 
-	"golang.org/x/crypto/salsa20/salsa"
-
 	"golang.org/x/crypto/curve25519"
-
 	"golang.org/x/crypto/ed25519"
+	"golang.org/x/crypto/salsa20/salsa"
 )
 
 const ztIdentityGenMemory = 2097152
@@ -105,7 +103,7 @@ type ZeroTierIdentity struct {
 }
 
 // NewZeroTierIdentity creates a new ZeroTier Identity.
-// This can be a little bit time consuming due to one way proof of work requirements (usually a few hundred milliseconds).
+// This can be a little bit time-consuming due to one way proof of work requirements (usually a few hundred milliseconds).
 func NewZeroTierIdentity() (id ZeroTierIdentity) {
 	for {
 		pub, priv := generateDualPair()
@@ -133,22 +131,19 @@ func NewZeroTierIdentity() (id ZeroTierIdentity) {
 // PrivateKeyString returns the full identity.secret if the private key is set, or an empty string if no private key is set.
 func (id *ZeroTierIdentity) PrivateKeyString() string {
 	if id.privateKey != nil {
-		s := fmt.Sprintf("%.10x:0:%x:%x", id.address, id.publicKey, *id.privateKey)
-		return s
+		return fmt.Sprintf("%.10x:0:%x:%x", id.address, id.publicKey, *id.privateKey)
 	}
 	return ""
 }
 
 // PublicKeyString returns identity.public contents.
 func (id *ZeroTierIdentity) PublicKeyString() string {
-	s := fmt.Sprintf("%.10x:0:%x", id.address, id.publicKey)
-	return s
+	return fmt.Sprintf("%.10x:0:%x", id.address, id.publicKey)
 }
 
 // IDString returns the NodeID as a 10-digit hex string
 func (id *ZeroTierIdentity) IDString() string {
-	s := fmt.Sprintf("%.10x", id.address)
-	return s
+	return fmt.Sprintf("%.10x", id.address)
 }
 
 // ID returns the ZeroTier address as a uint64
